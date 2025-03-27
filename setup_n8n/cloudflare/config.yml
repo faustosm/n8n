@@ -1,0 +1,26 @@
+tunnel: painel-automacao
+credentials-file: /home/fausto/.cloudflared/painel-automacao.json
+
+ingress:
+  - hostname: painel.fsmhub.net
+    service: http://localhost:4321
+
+  - hostname: n8nlocal.fsmhub.net
+    service: http://localhost:5678
+
+  - hostname: pgadminlocal.fsmhub.net
+    service: http://localhost:5050
+
+  - hostname: portainerlocal.fsmhub.net
+    service: http://localhost:9000
+
+  - hostname: uptimekuma.fsmhub.net
+    service: http://localhost:3001
+
+  - hostname: cadvisor.fsmhub.net
+    service: http://localhost:8080
+
+  - hostname: dozzle.fsmhub.net
+    service: http://localhost:8888
+
+  - service: http_status:404
