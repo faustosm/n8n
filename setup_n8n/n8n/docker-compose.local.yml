@@ -1,0 +1,89 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: n8n-postgres-local
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_local_data:/var/lib/postgresql/data
+    networks:
+      - tools-net
+
+  redis:
+    image: redis:6
+    container_name: n8n-redis-local
+    restart: unless-stopped
+    volumes:
+      - redis_local_data:/data
+    networks:
+      - tools-net
+
+  n8n-main:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n-main-local
+    restart: unless-stopped
+    ports:
+      - "${N8N_PORT}:5678"
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
+      - DB_POSTGRESDB_USER=${POSTGRES_USER}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
+      - N8N_PORT=${N8N_PORT}
+      - N8N_PROTOCOL=${N8N_PROTOCOL}
+      - N8N_HOST=${N8N_HOST}
+      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE}
+      - TZ=${N8N_TIMEZONE}
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_RUNNERS_ENABLED=true
+      - OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS=true
+
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - n8n_local_data:/home/node/.n8n
+    networks:
+      - tools-net
+
+  n8n-worker:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n-worker-local
+    restart: unless-stopped
+    depends_on:
+      - n8n-main
+      - redis
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
+      - DB_POSTGRESDB_USER=${POSTGRES_USER}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
+      - QUEUE_MODE=redis
+      - QUEUE_REDIS_HOST=redis
+      - QUEUE_REDIS_PORT=${REDIS_PORT}
+      - EXECUTIONS_MODE=queue
+      - N8N_HOST=${N8N_HOST}
+      - N8N_PROTOCOL=${N8N_PROTOCOL}
+      - TZ=${N8N_TIMEZONE}
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_RUNNERS_ENABLED=true
+      - OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS=true
+      
+    networks:
+      - tools-net
+
+volumes:
+  postgres_local_data:
+  redis_local_data:
+  n8n_local_data:
+
+networks:
+  tools-net:
+    driver: bridge

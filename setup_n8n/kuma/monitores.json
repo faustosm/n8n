@@ -1,0 +1,10 @@
+[
+  { "name": "Portainer",    "type": "http", "url": "http://localhost:9000" },
+  { "name": "pgAdmin",      "type": "http", "url": "http://localhost:5050" },
+  { "name": "Dozzle",       "type": "http", "url": "http://localhost:8888" },
+  { "name": "Uptime Kuma",  "type": "http", "url": "http://localhost:3001" },
+  { "name": "cAdvisor",     "type": "http", "url": "http://localhost:8080" },
+  { "name": "N8N",          "type": "http", "url": "http://localhost:5678" },
+  { "name": "Redis",        "type": "tcp",  "hostname": "localhost", "port": 6379 },
+  { "name": "PostgreSQL",   "type": "tcp",  "hostname": "localhost", "port": 5432 }
+]
