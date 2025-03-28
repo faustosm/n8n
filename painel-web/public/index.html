@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FSMHub - Painel de Ambientes</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <script>
+      function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.getElementById(tabId).classList.remove('hidden');
+
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('border-b-2', 'border-indigo-500', 'text-indigo-500'));
+        document.querySelector(`[data-tab="${tabId}"]`).classList.add('border-b-2', 'border-indigo-500', 'text-indigo-500');
+      }
+    </script>
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+    <div class="max-w-3xl mx-auto px-4 py-10">
+      <h1 class="text-3xl font-bold text-center mb-4">⚙️ FSMHub - Painel de Ambientes</h1>
+      <p class="text-center text-gray-500 mb-10">Acesso rápido aos seus serviços</p>
+
+      <!-- Tabs -->
+      <div class="flex justify-center mb-6 border-b">
+        <button class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-indigo-500 text-indigo-500" data-tab="local" onclick="showTab('local')">Ambiente Local</button>
+        <button class="tab-btn px-4 py-2 text-sm font-medium" data-tab="dev" onclick="showTab('dev')">Desenvolvimento</button>
+        <button class="tab-btn px-4 py-2 text-sm font-medium" data-tab="prod" onclick="showTab('prod')">Produção</button>
+      </div>
+
+      <!-- Conteúdo: Local -->
+      <div id="local" class="tab-content">
+        <div class="grid gap-4">
+          <a href="https://n8n.local.automacao.fsmhub.net" class="block bg-white shadow-md hover:shadow-lg px-6 py-4 rounded-xl">🔁 N8N</a>
+          <a href="https://portainer.local.automacao.fsmhub.net" class="block bg-white shadow-md hover:shadow-lg px-6 py-4 rounded-xl">📊 Portainer</a>
+          <a href="https://pgadmin.local.automacao.fsmhub.net" class="block bg-white shadow-md hover:shadow-lg px-6 py-4 rounded-xl">🐘 pgAdmin</a>
+          <a href="https://uptimekuma.local.automacao.fsmhub.net" class="block bg-white shadow-md hover:shadow-lg px-6 py-4 rounded-xl">📈 Uptime Kuma</a>
+          <a href="https://cadvisor.local.automacao.fsmhub.net" class="block bg-white shadow-md hover:shadow-lg px-6 py-4 rounded-xl">⚙️ cAdvisor</a>
+          <a href="https://dozzle.local.automacao.fsmhub.net" class="block bg-white shadow-md hover:shadow-lg px-6 py-4 rounded-xl">📦 Dozzle</a>
+        </div>
+      </div>
+
+      <!-- Conteúdo: Desenvolvimento -->
+      <div id="dev" class="tab-content hidden">
+        <span class="block bg-gray-200 px-6 py-4 rounded-xl text-gray-500 italic">(ainda não configurado)</span>
+      </div>
+
+      <!-- Conteúdo: Produção -->
+      <div id="prod" class="tab-content hidden">
+        <span class="block bg-gray-200 px-6 py-4 rounded-xl text-gray-500 italic">(ainda não configurado)</span>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+http:
+  middlewares:
+    auth-painel:
+      basicAuth:
+        users:
+          - "admin:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"  # usuário: admin / senha: admin
+
+  routers:
+    painel-router:
+      rule: "Host(`painel.automacao.fsmhub.net`)"
+      entryPoints:
+        - web
+      service: painel-service
+      middlewares:
+        - auth-painel
+
+  services:
+    painel-service:
+      loadBalancer:
+        servers:
+          - url: "http://painel-fsmhub:80"

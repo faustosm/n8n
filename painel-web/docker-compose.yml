@@ -1,0 +1,9 @@
+services:
+  painel-fsmhub:
+    build: .
+    container_name: painel-fsmhub
+    ports:
+      - "4321:80"
+    volumes:
+      - ./public:/usr/share/nginx/html:ro
+    restart: unless-stopped
