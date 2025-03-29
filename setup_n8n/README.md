@@ -29,8 +29,6 @@ Dozzle: http://localhost:8888
 
 Uptime Kuma: http://localhost:3001
 
-cAdvisor: http://localhost:8080
-
 N8N: http://localhost:5678
 
 Redis: localhost:6379 (conexão TCP, não tem painel web)

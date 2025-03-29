@@ -25,7 +25,7 @@ Interface do painel visual feito com Astro + Tailwind para acessar os ambientes 
 Organização da stack de automação e ferramentas auxiliares:
 
 - `n8n-local/` – Stack principal do n8n com Redis/Postgres
-- `tools/` – Portainer, pgAdmin, Uptime Kuma, cAdvisor, Dozzle
+- `tools/` – Portainer, pgAdmin, Uptime Kuma, Dozzle
 - `uptime-kuma/` – Scripts e monitoramentos
 - `scripts/` – Automatização de instalação, limpeza e inicialização
 

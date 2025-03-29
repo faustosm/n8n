@@ -3,7 +3,6 @@ cloudflared tunnel route dns painel-automacao n8nlocal.fsmhub.net
 cloudflared tunnel route dns painel-automacao pgadminlocal.fsmhub.net
 cloudflared tunnel route dns painel-automacao portainerlocal.fsmhub.net
 cloudflared tunnel route dns painel-automacao uptimekuma.fsmhub.net
-cloudflared tunnel route dns painel-automacao cadvisor.fsmhub.net
 cloudflared tunnel route dns painel-automacao dozzle.fsmhub.net
 
 

@@ -17,9 +17,6 @@ ingress:
   - hostname: uptimekuma.fsmhub.net
     service: http://localhost:3001
 
-  - hostname: cadvisor.fsmhub.net
-    service: http://localhost:8080
-
   - hostname: dozzle.fsmhub.net
     service: http://localhost:8888
 

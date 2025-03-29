@@ -1,89 +1,91 @@
+volumes:
+  db_storage:
+  n8n_storage:
+  redis_storage:
+
+networks:
+  tools-net:
+    name: tools-net
+    driver: bridge
+    external: true
+
+x-shared: &shared
+  restart: always
+  image: docker.n8n.io/n8nio/n8n
+  environment:
+    - DB_TYPE=postgresdb
+    - DB_POSTGRESDB_HOST=postgres
+    - DB_POSTGRESDB_PORT=5432
+    - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
+    - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
+    - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
+    - EXECUTIONS_MODE=queue
+    - QUEUE_BULL_REDIS_HOST=redis
+    - QUEUE_HEALTH_CHECK_ACTIVE=true
+    - N8N_ENCRYPTION_KEY=${ENCRYPTION_KEY}
+    - N8N_RUNNERS_ENABLED=true
+    - OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS=true
+    - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+  links:
+    - postgres
+    - redis
+  volumes:
+    - n8n_storage:/home/node/.n8n
+  depends_on:
+    redis:
+      condition: service_healthy
+    postgres:
+      condition: service_healthy
+
 services:
   postgres:
-    image: postgres:15
-    container_name: n8n-postgres-local
-    restart: unless-stopped
+    container_name: n8n-postgres
+    image: postgres:16
+    restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - POSTGRES_NON_ROOT_USER
+      - POSTGRES_NON_ROOT_PASSWORD
     volumes:
-      - postgres_local_data:/var/lib/postgresql/data
+      - db_storage:/var/lib/postgresql/data
+      - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - tools-net
 
   redis:
-    image: redis:6
-    container_name: n8n-redis-local
-    restart: unless-stopped
+    container_name: n8n-redis
+    image: redis:6-alpine
+    restart: always
     volumes:
-      - redis_local_data:/data
+      - redis_storage:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - tools-net
 
-  n8n-main:
-    image: docker.n8n.io/n8nio/n8n
-    container_name: n8n-main-local
-    restart: unless-stopped
+  n8n:
+    container_name: n8n-main
+    <<: *shared
     ports:
-      - "${N8N_PORT}:5678"
-    environment:
-      - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_HOST=postgres
-      - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
-      - DB_POSTGRESDB_USER=${POSTGRES_USER}
-      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
-      - N8N_PORT=${N8N_PORT}
-      - N8N_PROTOCOL=${N8N_PROTOCOL}
-      - N8N_HOST=${N8N_HOST}
-      - N8N_BASIC_AUTH_ACTIVE=${N8N_BASIC_AUTH_ACTIVE}
-      - TZ=${N8N_TIMEZONE}
-      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-      - N8N_RUNNERS_ENABLED=true
-      - OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS=true
-
-    depends_on:
-      - postgres
-      - redis
-    volumes:
-      - n8n_local_data:/home/node/.n8n
+      - 5678:5678
     networks:
       - tools-net
 
   n8n-worker:
-    image: docker.n8n.io/n8nio/n8n
-    container_name: n8n-worker-local
-    restart: unless-stopped
+    container_name: n8n-worker
+    <<: *shared
+    command: worker
     depends_on:
-      - n8n-main
-      - redis
-    environment:
-      - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_HOST=postgres
-      - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
-      - DB_POSTGRESDB_USER=${POSTGRES_USER}
-      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
-      - QUEUE_MODE=redis
-      - QUEUE_REDIS_HOST=redis
-      - QUEUE_REDIS_PORT=${REDIS_PORT}
-      - EXECUTIONS_MODE=queue
-      - N8N_HOST=${N8N_HOST}
-      - N8N_PROTOCOL=${N8N_PROTOCOL}
-      - TZ=${N8N_TIMEZONE}
-      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-      - N8N_RUNNERS_ENABLED=true
-      - OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS=true
-      
+      - n8n
     networks:
       - tools-net
-
-volumes:
-  postgres_local_data:
-  redis_local_data:
-  n8n_local_data:
-
-networks:
-  tools-net:
-    driver: bridge
