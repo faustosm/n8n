@@ -9,7 +9,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - portainer_data:/data
     networks:
-      - tools-net
+      - automacao-net
 
   watchtower:
     image: containrrr/watchtower
@@ -18,7 +18,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - tools-net
+      - automacao-net
 
   pgadmin:
     image: dpage/pgadmin4
@@ -32,7 +32,7 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     networks:
-      - tools-net
+      - automacao-net
 
   dozzle:
     image: amir20/dozzle
@@ -43,7 +43,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - tools-net
+      - automacao-net
 
   uptime-kuma:
     image: louislam/uptime-kuma
@@ -54,13 +54,17 @@ services:
     volumes:
       - uptimekuma_data:/app/data
     networks:
-      - tools-net
+      - automacao-net
 
 volumes:
   portainer_data:
+    name: automacao-portainer
   pgadmin_data:
+    name: automacao-pgadmin
   uptimekuma_data:
+    name: automacao-uptimekuma
 
 networks:
-  tools-net:
+  automacao-net:
     external: true
+

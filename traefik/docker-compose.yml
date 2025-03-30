@@ -3,14 +3,28 @@ services:
     image: traefik:v2.11
     container_name: traefik
     restart: unless-stopped
+    command:
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.filename=/etc/traefik/dynamic.yml"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=seu-email@exemplo.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--log.level=INFO"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+      - "./dynamic.yml:/etc/traefik/dynamic.yml:ro"
     networks:
       - proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.painel.rule=Host(`painel.automacao.fsmhub.net`)"
-      - "traefik.http.routers.painel.entrypoints=web"
-      - "traefik.http.routers.painel.middlewares=auth-painel@file"
-      - "traefik.http.services.painel.loadbalancer.server.port=80"
 
 networks:
-  proxy:  # Agora será criada automaticamente como interna
+  proxy:
+    name: proxy

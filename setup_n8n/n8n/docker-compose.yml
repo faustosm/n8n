@@ -1,13 +1,15 @@
 volumes:
   db_storage:
+    name: automacao-db
   n8n_storage:
+    name: automacao-n8n
   redis_storage:
+    name: automacao-redis
 
 networks:
-  tools-net:
-    name: tools-net
+  automacao-net:
+    name: automacao-net
     driver: bridge
-    external: true
 
 x-shared: &shared
   restart: always
@@ -57,7 +59,7 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - tools-net
+      - automacao-net
 
   redis:
     container_name: n8n-redis
@@ -71,7 +73,7 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - tools-net
+      - automacao-net
 
   n8n:
     container_name: n8n-main
@@ -79,7 +81,7 @@ services:
     ports:
       - 5678:5678
     networks:
-      - tools-net
+      - automacao-net
 
   n8n-worker:
     container_name: n8n-worker
@@ -88,4 +90,4 @@ services:
     depends_on:
       - n8n
     networks:
-      - tools-net
+      - automacao-net

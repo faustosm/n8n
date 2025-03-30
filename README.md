@@ -70,3 +70,21 @@ Todos os serviços são protegidos por HTTPS e autenticação básica, configura
 
 Mantenedor: [Fausto - FSMHub]
 
+---
+
+## Senhas e links:
+
+- portainer:
+    - link: http://localhost:9000
+    - usuario: admin
+    - senha: senha padrão fausto
+
+- dozzle:
+    - link: http://localhost:8888/
+    - usuario: admin
+    - senha: sem senha
+
+- uptime kuma:
+    - link: http://localhost:3001
+    - usuario: admin
+    - senha: admin123
